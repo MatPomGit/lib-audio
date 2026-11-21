@@ -1,34 +1,19 @@
-# REPLACE_LIB_TITLE
+# lib-audio
 
-**Rodzaj:** `lib-*` · **Etap:** scaffold · **API:** eksperymentalne, niewydane.  
-**Autor podstawowy:** Mateusz Pomianek; opcjonalni współautorzy po potwierdzeniu wkładu.
+Akwizycja i przetwarzanie dźwięku, rozpoznawanie mowy, VAD, synteza głosu oraz analiza akustyczna.
 
-Repozytorium definiuje jeden komponent wielokrotnego użytku, z jawnie wersjonowanym kontraktem.
-Warto tworzyć osobną bibliotekę dopiero, gdy istnieje rzeczywiste współużycie albo niezależny cykl życia i wersjonowania.
+Status: **ARCHITECTURE_ONLY / NOT_IMPLEMENTED / NOT_RELEASED**. Biblioteka zawiera strukturę planowanych modułów i kontraktów, bez instalowalnego pakietu i rzeczywistego przetwarzania danych.
 
-## Publiczny interfejs
+## Moduły
 
-[docs/contracts.md](docs/contracts.md), [contracts/api.json](contracts/api.json).
+| Moduł | Zadanie | Status |
+| --- | --- | --- |
+| [capture](src/lib_audio/capture/README.md) | Odczyt plików i urządzeń audio, strumieniowanie bloków PCM | PLANNED |
+| [vad](src/lib_audio/vad/README.md) | Detekcja aktywności mowy i segmentacja | PLANNED |
+| [asr](src/lib_audio/asr/README.md) | Adaptery rozpoznawania mowy offline i streaming | PLANNED |
+| [tts](src/lib_audio/tts/README.md) | Adaptery syntezy mowy, w tym lokalnego Piper | PLANNED |
+| [features](src/lib_audio/features/README.md) | Analiza prozodii i parametrów akustycznych | PLANNED |
 
-## Zależności i kompatybilność
+Biblioteka odpowiada za tor audio i operacje mowy. lib-vlm/audio przekazuje nagrania do modeli multimodalnych, lecz nie implementuje VAD/ASR/TTS; lib-sig odpowiada za ogólne sygnały naukowe i DSP. Nie budować własnego silnika Piper ani Whisper, jedynie adaptery.
 
-[docs/compatibility.md](docs/compatibility.md), [docs/consumers.md](docs/consumers.md).
-
-## Walidacja szkieletu
-
-```bash
-python scripts/validate_repository.py --phase scaffold
-python scripts/validate_documentation.py
-python scripts/validate_pages.py
-python -m unittest discover -s tests -v
-```
-
-Zacznij od [TEMPLATE_SETUP.md](TEMPLATE_SETUP.md). GitHub Packages jest opcjonalnym kanałem zależnym od ekosystemu.
-
-## Audyt i kontrole jakości
-
-Zobacz [audyt szablonu z 2026-11-19](reviews/2026-11-19-template-audit.md) i plan działań P0–P2. Publiczne repozytoria mogą korzystać z GitHub-hosted runners. Szablon zawiera minimalny [workflow Scaffold CI](.github/workflows/ci.yml) z walidacją metadanych i testami regresyjnymi; nie buduje ani nie publikuje pakietów.
-
-## Architektura i bezpieczeństwo
-
-[Architektura](ARCHITECTURE.md), [ADR](docs/adr/README.md), [model zagrożeń](docs/security/threat-model.md), [łańcuch dostaw](docs/security/supply-chain.md), [zarządzanie](GOVERNANCE.md) i [limity dokumentacji](docs/documentation.md). Publiczna dokumentacja API korzysta tylko z `pages/` ([Pages](docs/pages.md)); `docs/` pozostaje wewnętrzne. [Wydania LIB](docs/releases.md) wymagają osobnej autoryzacji.
+Zobacz [architekturę](ARCHITECTURE.md), [kontrakt](docs/contracts.md), [plan testów](docs/testing.md), [roadmap](docs/roadmap.md) i [prywatność](docs/privacy.md). Publiczne symbole w `contracts/api.json` pozostają puste do czasu implementacji. Nie publikowano Release ani Pages.
