@@ -9,6 +9,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 # Direct execution and isolated test imports resolve helper modules alike.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -123,6 +124,26 @@ def _required_str(data, field, errors, prefix):
     return val
 
 
+def _valid_remote_origin(value):
+    """Limit remote egress rules to explicit HTTPS origins without credentials."""
+    if not isinstance(value, str) or value != value.strip() or "*" in value or "\\" in value:
+        return False
+    try:
+        url = urlsplit(value)
+        _ = url.port  # Reject malformed port strings.
+    except ValueError:
+        return False
+    return (
+        url.scheme == "https"
+        and bool(url.hostname)
+        and url.username is None
+        and url.password is None
+        and url.path in ("", "/")
+        and not url.query
+        and not url.fragment
+    )
+
+
 def check(root=ROOT, phase="scaffold"):
     root = Path(root)
     errors = []
@@ -202,6 +223,10 @@ def check(root=ROOT, phase="scaffold"):
         errors.append("PRIVACY: invalid network_egress_allowlist")
     elif network_egress == "allowlisted_remote" and not allowlist:
         errors.append("PRIVACY: remote egress requires an allowlist")
+    elif network_egress == "allowlisted_remote" and any(
+        not _valid_remote_origin(endpoint) for endpoint in allowlist
+    ):
+        errors.append("PRIVACY: invalid remote HTTPS origin")
     elif network_egress != "allowlisted_remote" and allowlist:
         errors.append("PRIVACY: allowlist requires allowlisted_remote mode")
 

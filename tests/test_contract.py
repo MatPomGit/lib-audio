@@ -87,6 +87,20 @@ class ContractTests(unittest.TestCase):
         self.rewrite_json("config/component.json", {"network_egress": "allowlisted_remote"})
         self.assertIn("PRIVACY: remote egress requires an allowlist", check(self.repo))
 
+    def test_remote_egress_accepts_https_origin_in_scaffold(self):
+        self.rewrite_json("config/component.json", {
+            "network_egress": "allowlisted_remote",
+            "network_egress_allowlist": ["https://example.org"],
+        })
+        self.assertEqual([], check(self.repo, "scaffold"))
+
+    def test_remote_egress_rejects_insecure_origin(self):
+        self.rewrite_json("config/component.json", {
+            "network_egress": "allowlisted_remote",
+            "network_egress_allowlist": ["http://example.org"],
+        })
+        self.assertIn("PRIVACY: invalid remote HTTPS origin", check(self.repo))
+
     def test_non_remote_egress_rejects_remote_allowlist(self):
         self.rewrite_json("config/component.json", {
             "network_egress": "none",
