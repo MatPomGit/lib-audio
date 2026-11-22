@@ -1,19 +1,13 @@
-# Architektura biblioteki
+# Architektura lib-audio
 
-**Status:** szablon nie zawiera gotowego produktu. Identyfikatory i komponenty należy zdefiniować przed implementacją.
+Planowana biblioteka obejmuje akwizycję audio, VAD, ASR, TTS (w tym adapter lokalnego Piper) i analizę prozodii. `lib-sig` odpowiada za ogólne DSP, a `lib-vlm` za multimodalne wejścia do modeli; `lib-audio` nie implementuje od nowa silników Whisper ani Piper.
 
-- **Source of truth:** to repozytorium jest jedynym właścicielem kodu i publicznego kontraktu.
-- **Upstream:** zależności przypięte do wersji i SHA/digest; aktualność sprawdzana przez Research Autopilot.
-- **Downstream:** `msc-*` i inne narzędzia odwołują się do wydania lub ustalonego SHA, nie kopiują źródeł.
-- **Boundary:** adaptery sprzętowe, rendering i I/O oddzielone od logiki domenowej, gdy dotyczy.
-- **Reproduce:** zdefiniowany lockfile, wersje zależności i parametry.
-- **Audit live:** odczyt aktualnego HEAD i porównanie z przypiętym SHA. Zmiany via PR, bez cichego nadpisywania.
+## Granice danych
 
-Pełne kontrakty i macierz środowisk opisano w `docs/` i `config/component.json`.
+Dla bloków PCM planowane są jawne identyfikatory źródła, liczba kanałów, częstotliwość próbkowania, indeks pierwszej ramki, liczba ramek i identyfikator zegara. `timestamp_s` oznacza czas pierwszej ramki w nazwanej domenie zegara monotonicznego, **nie UTC**. Próbki z różnych zegarów wymagają zwalidowanej transformacji z niepewnością; resampling nie może usuwać metadanych pochodzenia.
 
+[Dokładny kontrakt czasu i segmentów](docs/contracts.md) · [Komponenty](docs/architecture/components.md) · [Przepływy i bezpieczeństwo](docs/architecture/data-flow.md) · [Prywatność](docs/privacy.md) · [ADR-0004](docs/adr/0004-boundaries.md).
 
-## Dokumentacja rozwijanej biblioteki
+Każdy adapter przed implementacją wymaga określenia klasy danych, trybu ruchu sieciowego, dopuszczonych endpointów, uprawnień i retencji. Stan tych ustaleń jest jawny w `config/component.json`. Nie wolno uznać `not_assessed` za przyzwolenie na przesyłanie danych.
 
-Po powstaniu kodu opisz **realne** moduły, publiczne API, wersje ABI, granice I/O i adaptery w [components](docs/architecture/components.md), [data-flow](docs/architecture/data-flow.md) i [distribution](docs/architecture/distribution.md). [ADR](docs/adr/README.md) zapisują uzasadnienia decyzji, a [model zagrożeń](docs/security/threat-model.md) rzeczywiste ryzyka i dowody ich kontroli.
-
-Publikacja dokumentacji jako GitHub Pages korzysta **wyłącznie** z `pages/`, nigdy z `docs/` ([polityka](docs/pages.md)). Brak wdrożonej funkcji oznacza stan `NOT_IMPLEMENTED`, a nie domyślny `PASS`.
+**Status: ARCHITECTURE_ONLY / NOT_IMPLEMENTED.** Katalogi `src/lib_audio/*` zawierają wyłącznie README; nie ma kodu backendów ani testów funkcjonalnych.

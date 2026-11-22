@@ -9,6 +9,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 # Direct execution and isolated test imports resolve helper modules alike.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -123,6 +124,26 @@ def _required_str(data, field, errors, prefix):
     return val
 
 
+def _valid_remote_origin(value):
+    """Limit remote egress rules to explicit HTTPS origins without credentials."""
+    if not isinstance(value, str) or value != value.strip() or "*" in value or "\\" in value:
+        return False
+    try:
+        url = urlsplit(value)
+        _ = url.port  # Reject malformed port strings.
+    except ValueError:
+        return False
+    return (
+        url.scheme == "https"
+        and bool(url.hostname)
+        and url.username is None
+        and url.password is None
+        and url.path in ("", "/")
+        and not url.query
+        and not url.fragment
+    )
+
+
 def check(root=ROOT, phase="scaffold"):
     root = Path(root)
     errors = []
@@ -184,6 +205,32 @@ def check(root=ROOT, phase="scaffold"):
     if component.get("api_contract") != "contracts/api.json":
         errors.append("COMPONENT: api_contract path mismatch")
 
+    # Repository-level declaration is not a substitute for adapter-specific review.
+    data_classes = ("not_assessed", "synthetic_only", "personal_data",
+                    "special_category_data", "mixed")
+    egress_modes = ("not_assessed", "none", "loopback", "allowlisted_remote")
+    data_class = component.get("data_classification")
+    network_egress = component.get("network_egress")
+    allowlist = component.get("network_egress_allowlist")
+    if not isinstance(data_class, str) or data_class not in data_classes:
+        errors.append("PRIVACY: invalid data_classification")
+    if not isinstance(network_egress, str) or network_egress not in egress_modes:
+        errors.append("PRIVACY: invalid network_egress")
+    if not isinstance(allowlist, list) or any(
+        not isinstance(endpoint, str) or not endpoint.strip()
+        for endpoint in allowlist
+    ) or (isinstance(allowlist, list) and len(allowlist) != len(set(allowlist))):
+        errors.append("PRIVACY: invalid network_egress_allowlist")
+    elif network_egress == "allowlisted_remote" and not allowlist:
+        errors.append("PRIVACY: remote egress requires an allowlist")
+    elif network_egress == "allowlisted_remote" and any(
+        not _valid_remote_origin(endpoint) for endpoint in allowlist
+    ):
+        errors.append("PRIVACY: invalid remote HTTPS origin")
+    elif network_egress != "allowlisted_remote" and allowlist:
+        errors.append("PRIVACY: allowlist requires allowlisted_remote mode")
+
+
     state = _state_metadata(root, errors)
     if state.get("repository_type") != "lib":
         errors.append("STATE: repository_type != lib")
@@ -202,6 +249,10 @@ def check(root=ROOT, phase="scaffold"):
         errors.append("CITATION: required author missing")
 
     if phase == "release":
+        if data_class == "not_assessed":
+            errors.append("PRIVACY: data_classification not assessed")
+        if network_egress == "not_assessed":
+            errors.append("PRIVACY: network_egress not assessed")
         for key in ("component_id", "display_name", "owner", "repository_url", "license_spdx", "language", "package_identifier"):
             value = component.get(key)
             if not isinstance(value, str) or not value.strip() or "REPLACE" in value or value == "UNDECIDED":

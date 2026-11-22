@@ -70,6 +70,44 @@ class ContractTests(unittest.TestCase):
         p.write_text(p.read_text().replace("source_version: 0.1.0", "source_version: 9.9.9"))
         self.assertIn("STATE: source_version mismatch", check(self.repo))
 
+    def test_unassessed_privacy_policy_blocks_release(self):
+        errors = check(self.repo, "release")
+        self.assertIn("PRIVACY: data_classification not assessed", errors)
+        self.assertIn("PRIVACY: network_egress not assessed", errors)
+
+    def test_invalid_data_classification_fails_scaffold(self):
+        self.rewrite_json("config/component.json", {"data_classification": "verified"})
+        self.assertIn("PRIVACY: invalid data_classification", check(self.repo))
+
+    def test_invalid_network_egress_fails_scaffold(self):
+        self.rewrite_json("config/component.json", {"network_egress": "any"})
+        self.assertIn("PRIVACY: invalid network_egress", check(self.repo))
+
+    def test_remote_egress_requires_allowlist(self):
+        self.rewrite_json("config/component.json", {"network_egress": "allowlisted_remote"})
+        self.assertIn("PRIVACY: remote egress requires an allowlist", check(self.repo))
+
+    def test_remote_egress_accepts_https_origin_in_scaffold(self):
+        self.rewrite_json("config/component.json", {
+            "network_egress": "allowlisted_remote",
+            "network_egress_allowlist": ["https://example.org"],
+        })
+        self.assertEqual([], check(self.repo, "scaffold"))
+
+    def test_remote_egress_rejects_insecure_origin(self):
+        self.rewrite_json("config/component.json", {
+            "network_egress": "allowlisted_remote",
+            "network_egress_allowlist": ["http://example.org"],
+        })
+        self.assertIn("PRIVACY: invalid remote HTTPS origin", check(self.repo))
+
+    def test_non_remote_egress_rejects_remote_allowlist(self):
+        self.rewrite_json("config/component.json", {
+            "network_egress": "none",
+            "network_egress_allowlist": ["https://example.org"],
+        })
+        self.assertIn("PRIVACY: allowlist requires allowlisted_remote mode", check(self.repo))
+
     def test_path_escape_is_not_accepted(self):
         self.rewrite_json("config/release-gate.json", {"release_artifact_path": "../../etc/passwd"})
         self.assertIn("MISSING RELEASE ARTIFACT", check(self.repo, "release"))

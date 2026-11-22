@@ -1,11 +1,13 @@
-# Komponenty i interfejsy
+# Planowane komponenty
 
-**Stan: NOT_DEFINED.** Nie istnieją moduły produkcyjne w szablonie.
-
-| Moduł | Źródła | Kontrakt API | Dowód |
+| Moduł | Odpowiedzialność | Ograniczenia | Status |
 | --- | --- | --- | --- |
-| Brak gotowego modułu | NOT_APPLICABLE | [contracts/api.json](../../contracts/api.json) | NOT_RUN |
+| `lib_audio.capture` | Odczyt plików i urządzeń audio, strumieniowanie bloków PCM | Jasny sample rate, liczba kanałów, brak automatycznego zapisu rozmów | PLANNED |
+| `lib_audio.vad` | Detekcja aktywności mowy i segmentacja | Znormalizowane przedziały czasu, sensitivity i zasady false positives | PLANNED |
+| `lib_audio.asr` | Adaptery rozpoznawania mowy offline i streaming | Odpowiedź tekstowa, czas, confidence gdy dostępne, model_id/digest | PLANNED |
+| `lib_audio.tts` | Adaptery syntezy mowy, w tym lokalnego Piper | Voice ID, właściwa próbka wyjściowa, latency i kontrola bufora | PLANNED |
+| `lib_audio.features` | Analiza prozodii i parametrów akustycznych | F0, energia, tempo, jednostki, zakres interpretacji i ograniczenia | PLANNED |
 
-Po wdrożeniu kodu zapisz rzeczywiste moduły, ich odpowiedzialność, publiczne symbole, typy, semantykę błędów, jednostki, zależności i wersję API/ABI. Zmiany niekompatybilne wymagają osobnego planu migracji oraz testów odbiorców.
+Biblioteka odpowiada za tor audio i operacje mowy. lib-vlm/audio przekazuje nagrania do modeli multimodalnych, lecz nie implementuje VAD/ASR/TTS; lib-sig odpowiada za ogólne sygnały naukowe i DSP. Nie budować własnego silnika Piper ani Whisper, jedynie adaptery.
 
-Zobacz [kompatybilność](../compatibility.md), [konsumentów](../consumers.md) i [ADR](../adr/README.md). Nie kopiuj implementacji ani całego kontraktu do tego opisu.
+Publiczne symbole implementować dopiero po teście kontraktowym; `contracts/api.json` rejestruje tylko rzeczywistą implementację.
