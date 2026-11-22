@@ -6,15 +6,15 @@ programme: research-autopilot
 owner: MatPomGit
 updated: 2026-11-22
 lifecycle: development
-evidence_status: not_run
+evidence_status: offline_ci_pass
 device_validation_status: not_applicable
 pages_status: not_configured
 release_status: not_released
 source_version: 0.1.0
-next_action: validate_final_sha_ci_and_obtain_independent_review
+next_action: obtain_independent_review_on_final_sha
 blockers:
   - no_installable_package
   - data_classification_and_network_egress_not_assessed
   - choose_license_before_distribution
   - real_environment_e2e_not_run
-  - final_sha_ci_and_independent_review_pending
+  - independent_review_pending
