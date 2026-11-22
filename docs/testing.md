@@ -1,6 +1,6 @@
 # Strategia testowania
 
-**Scaffold CI nie testuje działania przetwarzania audio.** Testy offline na danych syntetycznych powinny poprzedzać połączenie z rzeczywistymi urządzeniami, uczestnikami lub modelami.
+**Scaffold CI obejmuje testy jednostkowe eksperymentalnego `AudioChunk` offline**, ale nie testuje rzeczywistej akwizycji, backendów, VAD/ASR/TTS ani urządzeń. Testy syntetyczne poprzedzają integrację z uczestnikami i modelami.
 
 1. Odczyt WAV 16/24/32-bit: kanały, skalowanie i jawna reprezentacja PCM.
 2. Długość bloku i resampling: `frame_count / sample_rate_hz`, indeksy wejścia/wyjścia, opóźnienie, reguła zaokrąglania.
@@ -13,13 +13,15 @@
 
 Raport: polecenia, środowisko, finalny commit SHA, konfiguracja zegara/backendu, dane syntetyczne lub ich pochodzenie, wynik i ograniczenia. `NOT_RUN` nie jest `PASS`.
 
-Walidacja samego szkieletu:
+Zakres aktualnych testów PCM: liczba ramek i nominalny koniec półotwarty, puste payloady, częściowe ramki, niezmienność, walidacja identyfikatorów, skrajne wartości czasu, dokładny limit 64 MiB i brak bajtów audio w `repr()`. **CI #45017602414:** 75/75 PASS na SHA `90c9a7648c67`; to dowód historyczny, wymagający ponowienia po kolejnej zmianie HEAD. Pełny test urządzeń i danych rzeczywistych pozostaje NOT_RUN.
+
+Walidacja repozytorium i eksperymentalnego kodu offline:
 
 ```bash
 python scripts/validate_repository.py --phase scaffold
 python scripts/validate_documentation.py
 python scripts/validate_pages.py
-python -m unittest discover -s tests -v
+PYTHONPATH=src python -m unittest discover -s tests -v
 python -m mkdocs build --strict
 python scripts/validate_rendered_pages.py --strict
 ```
