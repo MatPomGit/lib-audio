@@ -1,5 +1,23 @@
-# Instalacja
+# Uruchomienie z repozytorium
 
-Projekt jest w fazie architektury; **nie ma instalowalnego pakietu**. Nie podano komendy `pip install` udającej istniejące wydanie.
+**Status: EXPERIMENTAL / NOT_RELEASED.** Dostępny jest wyłącznie moduł offline `AudioChunk`; brak instalowalnego pakietu, dystrybucji PyPI, `pip install` i wymagań sprzętowych. Działanie potwierdzono w CI na Pythonie 3.11 (Linux). To nie jest deklaracja obsługi innych systemów.
 
-Po implementacji będzie wymagana izolowana instalacja z przypiętego SHA/tagu, sprawdzone zależności i aktywny, autoryzowany backend. Działanie testów należy potwierdzić osobno na modelu/urządzeniu.
+## Uruchomienie testów z katalogu głównego
+
+W powłoce Bash (Linux):
+
+```bash
+PYTHONPATH=src python -m unittest discover -s tests -v
+```
+
+W Windows PowerShell (instrukcja, **niepotwierdzona testem Windows**):
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m unittest discover -s tests -v
+Remove-Item Env:PYTHONPATH
+```
+
+Przykład użycia bez dostępu do urządzeń znajduje się w [kontrakcie AudioChunk](contracts.md). Moduł importuje się z `lib_audio.capture.pcm` po dodaniu `src` do ścieżki Pythona. Nie używa sieci, odczytu plików ani modeli mowy.
+
+Powyższe polecenia dotyczą testów jednostkowych, **nie** instalacji ani weryfikacji środowisk produkcyjnych. Pierwsze wydanie będzie wymagało oddzielnej walidacji instalacji z konkretnego SHA/tagu, licencji, zależności, prywatności i odbiorców.

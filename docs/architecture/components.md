@@ -1,4 +1,4 @@
-# Planowane komponenty
+# Komponenty: stan implementacji
 
 | Moduł | Odpowiedzialność | Ograniczenia | Status |
 | --- | --- | --- | --- |
@@ -10,4 +10,4 @@
 
 Biblioteka odpowiada za tor audio i operacje mowy. lib-vlm/audio przekazuje nagrania do modeli multimodalnych, lecz nie implementuje VAD/ASR/TTS; lib-sig odpowiada za ogólne sygnały naukowe i DSP. Nie budować własnego silnika Piper ani Whisper, jedynie adaptery.
 
-Publiczne symbole implementować dopiero po teście kontraktowym; `contracts/api.json` rejestruje tylko rzeczywistą implementację.
+`AudioChunk` jest wewnętrznym eksperymentalnym symbolem objętym testami, lecz nie jest zadeklarowany jako stabilny punkt wejścia. `contracts/api.json:public_entrypoints=[]` pozostaje puste do odrębnej decyzji o API.

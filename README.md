@@ -16,7 +16,7 @@ Status: **EXPERIMENTAL / PARTIAL_IMPLEMENTATION / NOT_RELEASED** na gałęzi rob
 
 Biblioteka odpowiada za tor audio i operacje mowy. lib-vlm/audio przekazuje nagrania do modeli multimodalnych, lecz nie implementuje VAD/ASR/TTS; lib-sig odpowiada za ogólne sygnały naukowe i DSP. Nie budować własnego silnika Piper ani Whisper, jedynie adaptery.
 
-Zobacz [architekturę](ARCHITECTURE.md), [kontrakt](docs/contracts.md), [plan testów](docs/testing.md), [roadmap](docs/roadmap.md) i [prywatność](docs/privacy.md). Publiczne symbole w `contracts/api.json` pozostają puste do czasu implementacji. Nie publikowano Release ani Pages.
+Zobacz [architekturę](ARCHITECTURE.md), [kontrakt i przykład użycia](docs/contracts.md), [uruchomienie ze źródeł](docs/installation.md), [zgodność](docs/compatibility.md), [plan testów](docs/testing.md), [roadmap](docs/roadmap.md) i [prywatność](docs/privacy.md). Publiczne symbole w `contracts/api.json` pozostają puste do czasu implementacji. Nie publikowano Release ani Pages.
 
 ## Eksperymentalny blok PCM16
 

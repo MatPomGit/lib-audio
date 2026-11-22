@@ -13,7 +13,9 @@
 
 Raport: polecenia, środowisko, finalny commit SHA, konfiguracja zegara/backendu, dane syntetyczne lub ich pochodzenie, wynik i ograniczenia. `NOT_RUN` nie jest `PASS`.
 
-Walidacja samego szkieletu:
+Zakres aktualnych testów PCM: liczba ramek i nominalny koniec półotwarty, puste payloady, częściowe ramki, niezmienność, walidacja identyfikatorów, skrajne wartości czasu, dokładny limit 64 MiB i brak bajtów audio w `repr()`. **CI #45017602414:** 75/75 PASS na SHA `90c9a7648c67`; to dowód historyczny, wymagający ponowienia po kolejnej zmianie HEAD. Pełny test urządzeń i danych rzeczywistych pozostaje NOT_RUN.
+
+Walidacja repozytorium i eksperymentalnego kodu offline:
 
 ```bash
 python scripts/validate_repository.py --phase scaffold
