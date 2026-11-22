@@ -1,5 +1,5 @@
 """Offline PCM16 chunk contract; no capture, network, or device access."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from math import isfinite
 
 _MAX_PCM_BYTES = 64 * 1024 * 1024
@@ -20,14 +20,21 @@ class AudioChunk:
     first_frame_index: int
     sample_rate_hz: int
     channel_count: int
-    pcm_s16le: bytes
+    pcm_s16le: bytes = field(repr=False)
 
     def __post_init__(self) -> None:
         for field in ("source_id", "stream_id", "clock_id"):
             value = getattr(self, field)
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"{field} must be nonempty")
-        if isinstance(self.timestamp_s, bool) or not isinstance(self.timestamp_s, (int, float)) or not isfinite(self.timestamp_s) or self.timestamp_s < 0:
+        timestamp = self.timestamp_s
+        if isinstance(timestamp, bool) or not isinstance(timestamp, (int, float)) or timestamp < 0:
+            raise ValueError("timestamp_s must be finite and nonnegative")
+        try:
+            finite = isfinite(timestamp)
+        except OverflowError:
+            finite = False  # Huge Python integers cannot be represented as finite seconds.
+        if not finite:
             raise ValueError("timestamp_s must be finite and nonnegative")
         for field in ("first_frame_index", "sample_rate_hz", "channel_count"):
             value = getattr(self, field)

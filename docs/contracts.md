@@ -1,10 +1,10 @@
-# Proponowany kontrakt API
+# Kontrakty audio: komponent eksperymentalny i przyszłe API
 
-**Status: PROPOSED / NOT_IMPLEMENTED.** `contracts/api.json:public_entrypoints` pozostaje puste. Poniższe wymagania dotyczą przyszłej implementacji, nie potwierdzonego API.
+**Status: PARTIAL / EXPERIMENTAL / NOT_RELEASED.** `AudioChunk` działa jako lokalna reprezentacja PCM16 offline, ale nie jest stabilnym publicznym API; `contracts/api.json:public_entrypoints` pozostaje puste. Pozostałe typy to propozycje.
 
 | Typ logiczny | Planowane pola i jednostki | Status |
 | --- | --- | --- |
-| `AudioChunk` | `source_id`, `stream_id`, `clock_id`, `timestamp_s`, `first_frame_index`, `frame_count`, `sample_rate_hz`, `channel_count`, `encoding`, `pcm_or_ref` | PLANNED |
+| `AudioChunk` | `source_id`, `stream_id`, `clock_id`, `timestamp_s`, `first_frame_index`, `sample_rate_hz`, `channel_count`, `pcm_s16le`; wyliczane `frame_count`, `duration_s`, `end_s`; format stały PCM16 s16le, przeplot kanałów | EXPERIMENTAL / IMPLEMENTED OFFLINE |
 | `SpeechSegment` | `source_id`, `clock_id`, `start_s`, `end_s`, `text?`, `language?`, `confidence?` | PLANNED |
 | `VoiceRequest` | `text`, `voice_id`, `synthesis_parameters`, `request_id` | PLANNED |
 | `AcousticFeatures` | `f0_hz`, `intensity_db`, `jitter`, `shimmer`, `validity_flags` | PLANNED |
@@ -17,6 +17,12 @@
 - `first_frame_index` zapewnia ciągłość numeracji. Nie wolno jednak wyliczać bezwzględnego `timestamp_s` wyłącznie z indeksu, gdy urządzenie ma dryft, restart, luki lub zmienny zegar. Trzeba zachować pierwotny znacznik i informację o pochodzeniu pomiaru.
 - Znaczniki różnych `clock_id` **nie są porównywalne**, dopóki nie zapisano jawnej transformacji między domenami (przesunięcie, skala/dryft, niepewność i źródło synchronizacji). UTC można przechowywać oddzielnie jako opcjonalną metadaną, nie jako zamiennik czasu monotonicznego.
 - Resampling/segmentacja wymaga zachowania `input_rate_hz`, `output_rate_hz`, odwzorowania indeksów, opóźnienia filtru (jeśli występuje) i źródłowego `clock_id`. Granice należy przeliczać deterministycznie z określoną regułą zaokrąglania, bez ukrytych zmian czasu.
+
+## Zakres zaimplementowany w `AudioChunk`
+
+- Walidowane są niepuste identyfikatory, skończony nieujemny `timestamp_s`, całkowite indeksy i parametry próbkowania, niezmienny `bytes`, pełne ramki oraz limit 64 MiB. Puste bloki są dozwolone.
+- `repr(AudioChunk)` pomija surowe bajty PCM. Przesyłanie, zapisywanie i logowanie przez kod odbiorcy wymagają odrębnej kontroli prywatności.
+- Wykrywanie luk, duplikatów, dryftu i niespójności między **różnymi** blokami należy do przyszłego walidatora strumienia, nie do pojedynczego `AudioChunk`. Nie ma normalizacji, resamplingu ani I/O.
 
 ## Walidacja i błędy
 

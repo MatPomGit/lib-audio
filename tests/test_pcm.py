@@ -26,11 +26,18 @@ class PCMContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             chunk(pcm_s16le=b"\x00\x00")
 
-    def test_reject_invalid_clock_and_rate(self):
-        for fields in ({"clock_id": ""}, {"sample_rate_hz": 0},
-                       {"sample_rate_hz": True}, {"timestamp_s": float("nan")},
-                       {"timestamp_s": float("inf")}, {"first_frame_index": -1},
-                       {"channel_count": 0}):
+    def test_reject_invalid_metadata(self):
+        invalid = (
+            {"source_id": " "}, {"stream_id": ""}, {"clock_id": " "},
+            {"source_id": None}, {"sample_rate_hz": 0},
+            {"sample_rate_hz": True}, {"sample_rate_hz": 8000.5},
+            {"timestamp_s": float("nan")}, {"timestamp_s": float("inf")},
+            {"timestamp_s": float("-inf")}, {"timestamp_s": -0.5},
+            {"timestamp_s": True}, {"timestamp_s": 10 ** 400},
+            {"first_frame_index": -1}, {"first_frame_index": True},
+            {"channel_count": 0}, {"channel_count": True},
+        )
+        for fields in invalid:
             with self.subTest(fields=fields), self.assertRaises(ValueError):
                 chunk(**fields)
 
@@ -39,8 +46,16 @@ class PCMContractTests(unittest.TestCase):
             chunk(pcm_s16le=bytearray(8))
 
     def test_resource_limit(self):
+        at_limit = b"\x00" * (64 * 1024 * 1024)
+        self.assertEqual(chunk(pcm_s16le=at_limit).frame_count, len(at_limit) // 4)
         with self.assertRaises(ValueError):
-            chunk(pcm_s16le=b"\x00" * (64 * 1024 * 1024 + 4))
+            chunk(pcm_s16le=at_limit + b"\x00" * 4)
+
+    def test_repr_omits_audio_payload(self):
+        rendered = repr(chunk(pcm_s16le=b"ABCD"))
+        self.assertNotIn("ABCD", rendered)
+        self.assertNotIn("pcm_s16le", rendered)
+        self.assertIn("sample_rate_hz=8000", rendered)
 
     def test_immutable_metadata(self):
         x = chunk()

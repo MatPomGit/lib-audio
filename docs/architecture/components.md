@@ -2,7 +2,7 @@
 
 | Moduł | Odpowiedzialność | Ograniczenia | Status |
 | --- | --- | --- | --- |
-| `lib_audio.capture` | Odczyt plików i urządzeń audio, strumieniowanie bloków PCM | Jasny sample rate, liczba kanałów, brak automatycznego zapisu rozmów | PLANNED |
+| `lib_audio.capture` | Eksperymentalny `AudioChunk` PCM16 offline; odczyt urządzeń i plików planowany | Jawny sample rate, liczba kanałów, czas monotoniczny, brak I/O i zapisu nagrań | PARTIAL |
 | `lib_audio.vad` | Detekcja aktywności mowy i segmentacja | Znormalizowane przedziały czasu, sensitivity i zasady false positives | PLANNED |
 | `lib_audio.asr` | Adaptery rozpoznawania mowy offline i streaming | Odpowiedź tekstowa, czas, confidence gdy dostępne, model_id/digest | PLANNED |
 | `lib_audio.tts` | Adaptery syntezy mowy, w tym lokalnego Piper | Voice ID, właściwa próbka wyjściowa, latency i kontrola bufora | PLANNED |

@@ -46,6 +46,8 @@ jobs:
       - name: Check isolated public Pages
         run: python scripts/validate_pages.py
       - name: Run regression tests
+        env:
+          PYTHONPATH: src
         run: python -m unittest discover -s tests -v
       - name: Build and inspect approved Pages (never deploy)
         run: |

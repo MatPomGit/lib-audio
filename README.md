@@ -22,4 +22,4 @@ Zobacz [architekturę](ARCHITECTURE.md), [kontrakt](docs/contracts.md), [plan te
 
 `src/lib_audio/capture/pcm.py` udostępnia `AudioChunk` dla niezmiennych bajtów PCM signed 16-bit little-endian z przeplotem kanałów. Wymaga jawnej domeny zegara monotonicznego, źródła, strumienia i indeksu ramki; odrzuca niekompletne ramki, niepoprawne znaczniki oraz payload powyżej 64 MiB. Nie wykonuje I/O, normalizacji ani resamplingu. Nie należy traktować go jako stabilnego publicznego API.
 
-Testy offline po ustawieniu `PYTHONPATH=src`: `python -m unittest discover -s tests -p 'test_pcm.py' -v`. Wyniki testów i gotowość pakietu wymagają niezależnego potwierdzenia na finalnym SHA.
+Testy offline po ustawieniu `PYTHONPATH=src`: `python -m unittest discover -s tests -v` (pełna regresja) albo `python -m unittest discover -s tests -p 'test_pcm.py' -v` (tylko PCM). `repr(AudioChunk)` nie wypisuje surowych próbek. Wyniki testów i gotowość pakietu wymagają niezależnego potwierdzenia na finalnym SHA.
