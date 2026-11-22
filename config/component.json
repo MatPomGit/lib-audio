@@ -23,5 +23,8 @@
   "repository_url": "https://github.com/MatPomGit/lib-audio",
   "documentation_url": "https://github.com/MatPomGit/lib-audio#readme",
   "published_package_url": null,
-  "dependency_lockfiles": []
+  "dependency_lockfiles": [],
+  "data_classification": "not_assessed",
+  "network_egress": "not_assessed",
+  "network_egress_allowlist": []
 }

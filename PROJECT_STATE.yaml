@@ -4,7 +4,7 @@ repository_type: lib
 component_id: lib-audio
 programme: research-autopilot
 owner: MatPomGit
-updated: 2026-11-21
+updated: 2026-11-22
 lifecycle: scaffold
 evidence_status: not_run
 device_validation_status: not_applicable
@@ -14,5 +14,6 @@ source_version: 0.1.0
 next_action: implement_core_contract_and_offline_tests
 blockers:
   - no_executable_library
+  - data_classification_and_network_egress_not_assessed
   - choose_license_before_distribution
   - real_environment_e2e_not_run

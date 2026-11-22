@@ -1,11 +1,13 @@
 # Architektura lib-audio
 
-Akwizycja i przetwarzanie dźwięku, rozpoznawanie mowy, VAD, synteza głosu oraz analiza akustyczna. Proponowana warstwa obejmuje format danych i źródła, kontrolę jakości, adaptery istniejących backendów oraz jawne metadane pochodzenia.
+Planowana biblioteka obejmuje akwizycję audio, VAD, ASR, TTS (w tym adapter lokalnego Piper) i analizę prozodii. `lib-sig` odpowiada za ogólne DSP, a `lib-vlm` za multimodalne wejścia do modeli; `lib-audio` nie implementuje od nowa silników Whisper ani Piper.
 
-Biblioteka odpowiada za tor audio i operacje mowy. lib-vlm/audio przekazuje nagrania do modeli multimodalnych, lecz nie implementuje VAD/ASR/TTS; lib-sig odpowiada za ogólne sygnały naukowe i DSP. Nie budować własnego silnika Piper ani Whisper, jedynie adaptery.
+## Granice danych
 
-Jednostki i czas: sampling_rate_hz, kanały, próbki PCM float/int, czas rozpoczęcia monotoniczny w sekundach, duration_s. Przetwarzanie nie powinno modyfikować źródłowych danych bez jawnej deklaracji transformacji, a metryki jakości powinny zawierać próg, okno i status ważności.
+Dla bloków PCM planowane są jawne identyfikatory źródła, liczba kanałów, częstotliwość próbkowania, indeks pierwszej ramki, liczba ramek i identyfikator zegara. `timestamp_s` oznacza czas pierwszej ramki w nazwanej domenie zegara monotonicznego, **nie UTC**. Próbki z różnych zegarów wymagają zwalidowanej transformacji z niepewnością; resampling nie może usuwać metadanych pochodzenia.
 
-Opis modułów: [komponenty](docs/architecture/components.md) i [przepływ danych](docs/architecture/data-flow.md); decyzja projektowa: [ADR-0004](docs/adr/0004-boundaries.md). Katalogi `src/lib_audio/*` obecnie zawierają tylko README.
+[Dokładny kontrakt czasu i segmentów](docs/contracts.md) · [Komponenty](docs/architecture/components.md) · [Przepływy i bezpieczeństwo](docs/architecture/data-flow.md) · [Prywatność](docs/privacy.md) · [ADR-0004](docs/adr/0004-boundaries.md).
 
-**Brak kodu i testów backendów: NOT_IMPLEMENTED / NOT_RUN.**
+Każdy adapter przed implementacją wymaga określenia klasy danych, trybu ruchu sieciowego, dopuszczonych endpointów, uprawnień i retencji. Stan tych ustaleń jest jawny w `config/component.json`. Nie wolno uznać `not_assessed` za przyzwolenie na przesyłanie danych.
+
+**Status: ARCHITECTURE_ONLY / NOT_IMPLEMENTED.** Katalogi `src/lib_audio/*` zawierają wyłącznie README; nie ma kodu backendów ani testów funkcjonalnych.

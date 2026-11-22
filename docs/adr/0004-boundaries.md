@@ -18,4 +18,4 @@ Biblioteka odpowiada za tor audio i operacje mowy. lib-vlm/audio przekazuje nagr
 
 ## Konsekwencje
 
-Oddzielne kontrakty i testy źródeł. Zamierzone jednostki: sampling_rate_hz, kanały, próbki PCM float/int, czas rozpoczęcia monotoniczny w sekundach, duration_s. Nie deklarować wsparcia bez rzeczywistych testów.
+Oddzielne kontrakty i testy źródeł. Kontrakt czasu wymaga identyfikatora domeny/epoki zegara, indeksu ramek i jawnej transformacji przy synchronizacji urządzeń. Klasyfikacja danych, egress i retencja podlegają bramce przed implementacją adaptera. Zobacz [kontrakt](../contracts.md), [przepływy](../architecture/data-flow.md) i [prywatność](../privacy.md). Nie deklarować wsparcia bez rzeczywistych testów.
