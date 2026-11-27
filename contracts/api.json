@@ -3,9 +3,18 @@
   "name": "lib_audio",
   "api_version": "0.1.0",
   "stability": "experimental",
-  "public_entrypoints": [],
+  "public_entrypoints": [
+    "lib_audio.capture.pcm.AudioChunk",
+    "org.matpomgit.audio.EngineeringStereoSignal",
+    "org.matpomgit.audio.StereoSignalConfig",
+    "org.matpomgit.audio.StereoCondition",
+    "org.matpomgit.audio.FirstChannel"
+  ],
   "serialization_contracts": [],
   "breaking_change_policy": "major_version_with_migration_guide",
   "deprecation_policy": "documented_before_removal",
-  "runtime_requirements": []
+  "runtime_requirements": [
+    "Python >=3.11 (PCM16 module)",
+    "JVM 17 (stereo generator)"
+  ]
 }

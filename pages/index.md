@@ -1,3 +1,3 @@
-# Biblioteka
+# Speech and Audio Processing
 
-Informacje o bibliotece zostaną udostępnione po zatwierdzeniu materiałów do publikacji.
+Experimental offline Python PCM16 representation and independent Kotlin/JVM stereo signal generator. Speech recognition, synthesis and device capture remain planned. Digital amplitude is not acoustic calibration. Development version 0.1.0; no published packages.

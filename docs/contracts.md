@@ -1,6 +1,6 @@
 # Kontrakty audio: komponent eksperymentalny i przyszłe API
 
-**Status: PARTIAL / EXPERIMENTAL / NOT_RELEASED.** `AudioChunk` działa jako lokalna reprezentacja PCM16 offline, ale nie jest stabilnym publicznym API; `contracts/api.json:public_entrypoints` pozostaje puste. Pozostałe typy to propozycje.
+**Status: PARTIAL / EXPERIMENTAL / NOT_RELEASED.** `AudioChunk` działa jako lokalna reprezentacja PCM16 offline, ale nie jest stabilnym publicznym API; `contracts/api.json:public_entrypoints` zawiera eksperymentalne symbole. Pozostałe typy to propozycje.
 
 | Typ logiczny | Planowane pola i jednostki | Status |
 | --- | --- | --- |
@@ -49,3 +49,7 @@ Dane to dwie syntetyczne ramki ciszy mono. `timestamp_s` jest zadanym czasem mon
 Wymagane są identyfikatory źródła, jednostki, reprezentacja PCM, zakres amplitudy, jawne operacje normalizacji oraz status brakujących metryk (`null`/flaga, nigdy domniemane zero). Wartości NaN/nieskończone, niewłaściwa liczba kanałów, ujemne indeksy, nakładające się lub brakujące ramki oraz nieciągły zegar muszą zwrócić błąd albo jawne oznaczenie utraty danych. Planowane kody: `INVALID_INPUT`, `UNSUPPORTED_FORMAT`, `UNAVAILABLE`, `TIMEOUT`, `DATA_LOSS`, `CLOCK_MISMATCH`. Sposób postępowania przy dryfcie i lukach jest częścią kontraktu adaptera.
 
 Nie podawać zmyślonej pewności ASR ani jakości. Zmiany niekompatybilne w publicznym API po jego wdrożeniu wymagają SemVer, migracji oraz testów odbiorców. [Przepływy i granice zaufania](architecture/data-flow.md) oraz [prywatność](privacy.md).
+
+## Generator Kotlin/JVM
+
+`EngineeringStereoSignal.render` zwraca przeplatane próbki Float PCM z absolutnego indeksu ramki. `StereoSignalConfig` ogranicza amplitudę, częstotliwość, rozmiar i czas przejścia; `StereoCondition` oraz `FirstChannel` określają tryb. Nie ma konwersji do Python AudioChunk ani potwierdzonego wspólnego ABI. [Specyfikacja](stereo.md).
