@@ -1,5 +1,5 @@
 # Only explicitly approved Pages sources, never internal docs/.
-site_name: "Biblioteka"
+site_name: "Speech and Audio Processing"
 docs_dir: pages
 site_dir: site
 theme:
